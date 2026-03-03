@@ -15,7 +15,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbwx6i9vZA1J6fzq9ZmNjpdf
 
 // ⚠️ 互動式 AI 督導 API KEY
 // 請填入您從 Google AI Studio 取得的金鑰，結尾務必保留 ";"
-const apiKey = "AIzaSyA7MECa_g76ltZVpfh5DJvMhrwfOxoDmJM"; 
+const apiKey = ""; 
 
 // ==========================================
 // 輔助運算與共用元件
