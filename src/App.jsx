@@ -205,7 +205,7 @@ const SmartMotivator = ({ data, targetName, allStoresData }) => {
     return { __html: htmlText };
   };
 
-  // 診斷功能：改為檢查安全代理狀態
+  // 診斷功能：因改為後端代理，改為顯示安全連線狀態
   const checkAvailableModels = async () => {
     setIsTyping(true);
     setTypingStatus('正在診斷系統連線狀態...');
@@ -443,6 +443,7 @@ export default function App() {
   const [selectedStore, setSelectedStore] = useState(null);
   const [lockedStore, setLockedStore] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false); 
+  const [debugInfo, setDebugInfo] = useState(null); // 🌟 新增：用於顯示錯誤時的詳細 JSON
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -465,6 +466,8 @@ export default function App() {
           const months = Object.keys(result.data).sort().reverse();
           if (months.length > 0) setSelectedMonth(months[0]);
         } else {
+          // 🌟 修改：如果不是 success，直接把回傳的內容印出來給我們看！
+          setDebugInfo(JSON.stringify(result, null, 2));
           setError('API 連線成功，但回傳格式異常');
         }
       } catch (err) {
@@ -478,46 +481,7 @@ export default function App() {
   }, []);
 
   const currentMonthData = rawData?.[selectedMonth];
-  
-  // 🌟 Marshall 鋼鐵防護：動態計算總計，徹底消滅白畫面！
-  const summary = useMemo(() => {
-    // 1. 如果 GAS 有傳來正常的 summary，就直接用
-    if (currentMonthData?.summary && currentMonthData.summary.grossProfit) {
-      return currentMonthData.summary;
-    }
-    
-    // 2. 如果 GAS 沒傳來 summary（可能 (ALL) 檔案沒讀到或快取錯誤），我們自己加總！
-    const stores = currentMonthData?.stores || [];
-    if (stores.length === 0) return null;
-
-    const autoSum = {
-      grossProfit: { actual: 0, target: 0 },
-      contracts: { actual: 0, target: 0 },
-      insurance: { actual: 0, target: 0 },
-      accessories: { actual: 0, target: 0 },
-      applePhones: { actual: 0, target: 0 },
-      appleTablets: { actual: 0, target: 0 },
-      vivoPhones: { actual: 0, target: 0 },
-      huaweiWearable: { actual: 0, target: 0 },
-      stockPhones: { actual: 0, target: 0 },
-      glassProtector: { actual: 0, target: 0 },
-      gplusVacuum: { actual: 0, target: 0 },
-      lifeCircle: { actual: 0, target: 0 },
-      googleReviews: { actual: 0, target: 0 },
-      visitors: { actual: 0, target: 0 }
-    };
-
-    stores.forEach(store => {
-      Object.keys(autoSum).forEach(key => {
-        if (store[key]) {
-          autoSum[key].actual += (Number(store[key].actual) || 0);
-          autoSum[key].target += (Number(store[key].target) || 0);
-        }
-      });
-    });
-
-    return autoSum;
-  }, [currentMonthData]);
+  const summary = currentMonthData?.summary;
   
   const sortedStoresByProfit = useMemo(() => {
     if (!currentMonthData?.stores) return [];
@@ -582,11 +546,20 @@ export default function App() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-red-100 max-w-md text-center">
-          <AlertTriangle className="text-red-500 mx-auto mb-4" size={48} />
-          <h2 className="text-xl font-bold text-slate-800 mb-2">系統連線異常</h2>
-          <p className="text-slate-600 text-sm">{error}</p>
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-2xl shadow-sm border border-red-100 max-w-lg w-full">
+          <div className="flex flex-col items-center text-center">
+            <AlertTriangle className="text-red-500 mb-4" size={48} />
+            <h2 className="text-xl font-bold text-slate-800 mb-2">系統連線異常</h2>
+            <p className="text-slate-600 text-sm font-bold mb-4">{error}</p>
+          </div>
+          {/* 🌟 顯示錯誤的 JSON 內容 */}
+          {debugInfo && (
+            <div className="mt-4 bg-slate-100 p-4 rounded-xl overflow-x-auto text-left w-full">
+              <p className="text-xs text-slate-500 font-bold mb-2">GAS 實際回傳的內容：</p>
+              <pre className="text-xs text-rose-600 whitespace-pre-wrap font-mono">{debugInfo}</pre>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -622,13 +595,7 @@ export default function App() {
   };
 
   const renderAllStoresView = () => {
-    // 🌟 即使沒有全區總計，也有防護機制
-    if (!summary || !summary.grossProfit) return (
-      <div className="p-12 text-center bg-white rounded-3xl border border-slate-200 mt-6 animate-in fade-in">
-        <Store size={48} className="text-slate-300 mx-auto mb-4" />
-        <h3 className="text-xl font-bold text-slate-700 mb-2">正在同步或此月份無業績資料</h3>
-      </div>
-    );
+    if (!summary || !summary.grossProfit) return null;
 
     const totalActual = summary?.grossProfit?.actual || 0;
     const totalTarget = summary?.grossProfit?.target || 0;
@@ -835,7 +802,7 @@ export default function App() {
                 <span className="text-5xl font-black">${formatNum(storeActual)}</span>
                 <span className="text-white/60 font-bold">/ ${formatNum(storeTarget)}</span>
               </div>
-              <div className="relative w-full h-3 bg-black/20 rounded-full overflow-hidden">
+              <div className="relative w-full h-3 bg-indigo-900/40 rounded-full overflow-hidden">
                 <div 
                   className={`absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ${isOverkill ? 'bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]' : 'bg-white'}`}
                   style={{ width: `${Math.min(progress, 100)}%` }}
