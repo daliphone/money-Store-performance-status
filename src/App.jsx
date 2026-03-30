@@ -5,7 +5,9 @@ import {
   ArrowLeft, Store, Zap, Loader2, UserCircle, 
   AlertTriangle, Package, Tablet, Watch, Layers, 
   Wind, MessageCircle, Star, Footprints, Flame, Trophy, Sparkles, Crown, Bot,
-  X, Send, Info 
+  X, Send, Info,
+  // 🌟 修正：補上 4 月份新項目的 4 個專屬圖示
+  Wifi, Activity, ShoppingBag, Tv
 } from 'lucide-react';
 
 // ==========================================
@@ -237,7 +239,7 @@ const SmartMotivator = ({ data, targetName, allStoresData }) => {
 
     const statusInterval = setInterval(() => {
         setTypingStatus(prev => {
-            if (prev.includes('開啟') || prev.includes('調閱')) return '📊 掃描 14 項核心指標與人員表現...';
+            if (prev.includes('開啟') || prev.includes('調閱')) return '📊 掃描 19 項核心指標與人員表現...';
             if (prev.includes('掃描')) return '💡 正在彙整診斷報告與行動建議...';
             return '💡 正在彙整診斷報告與行動建議...';
         });
@@ -466,7 +468,6 @@ export default function App() {
           const months = Object.keys(result.data).sort().reverse();
           if (months.length > 0) setSelectedMonth(months[0]);
         } else {
-          // 🌟 修改：如果不是 success，直接把回傳的內容印出來給我們看！
           setDebugInfo(JSON.stringify(result, null, 2));
           setError('API 連線成功，但回傳格式異常');
         }
@@ -553,7 +554,6 @@ export default function App() {
             <h2 className="text-xl font-bold text-slate-800 mb-2">系統連線異常</h2>
             <p className="text-slate-600 text-sm font-bold mb-4">{error}</p>
           </div>
-          {/* 🌟 顯示錯誤的 JSON 內容 */}
           {debugInfo && (
             <div className="mt-4 bg-slate-100 p-4 rounded-xl overflow-x-auto text-left w-full">
               <p className="text-xs text-slate-500 font-bold mb-2">GAS 實際回傳的內容：</p>
@@ -573,21 +573,27 @@ export default function App() {
           <MetricCard title="門號業績" metric={data.contracts} unit="件" icon={Users} colorClass="text-blue-600" bgColorClass="bg-blue-50" />
           <MetricCard title="配件營收" metric={data.accessories} unit="元" icon={BatteryCharging} colorClass="text-amber-600" bgColorClass="bg-amber-50" />
           <MetricCard title="保險營收" metric={data.insurance} unit="元" icon={ShieldCheck} colorClass="text-rose-600" bgColorClass="bg-rose-50" />
+          {/* 🌟 4月新項目 */}
+          <MetricCard title="中嘉寬頻" metric={data.homeBroadband} unit="件" icon={Wifi} colorClass="text-cyan-600" bgColorClass="bg-cyan-50" />
+          <MetricCard title="Garmin" metric={data.garmin} unit="件" icon={Activity} colorClass="text-stone-600" bgColorClass="bg-stone-100" />
+          <MetricCard title="iPhone組合" metric={data.iphoneCombo} unit="組" icon={ShoppingBag} colorClass="text-purple-600" bgColorClass="bg-purple-50" />
         </MetricGroup>
 
         <MetricGroup title="硬體與穿戴銷量">
-          <MetricCard title="蘋果手機" metric={data.applePhones} unit="台" icon={Smartphone} colorClass="text-purple-600" bgColorClass="bg-purple-50" />
-          <MetricCard title="平板與手錶" metric={data.appleTablets} unit="台" icon={Tablet} colorClass="text-purple-500" bgColorClass="bg-purple-50" />
-          <MetricCard title="VIVO手機" metric={data.vivoPhones} unit="台" icon={Smartphone} colorClass="text-indigo-500" bgColorClass="bg-indigo-50" />
-          <MetricCard title="華為穿戴" metric={data.huaweiWearable} unit="點" icon={Watch} colorClass="text-cyan-600" bgColorClass="bg-cyan-50" />
           <MetricCard title="庫存手機" metric={data.stockPhones} unit="台" icon={Package} colorClass="text-slate-600" bgColorClass="bg-slate-100" />
+          <MetricCard title="蘋果手機" metric={data.applePhones} unit="台" icon={Smartphone} colorClass="text-slate-800" bgColorClass="bg-slate-200" />
+          <MetricCard title="平板與手錶" metric={data.appleTablets} unit="台" icon={Tablet} colorClass="text-slate-600" bgColorClass="bg-slate-100" />
+          <MetricCard title="華為穿戴" metric={data.huaweiWearable} unit="點" icon={Watch} colorClass="text-red-600" bgColorClass="bg-red-50" />
+          <MetricCard title="VIVO手機" metric={data.vivoPhones} unit="台" icon={Smartphone} colorClass="text-indigo-500" bgColorClass="bg-indigo-50" />
         </MetricGroup>
 
         <MetricGroup title="周邊與營運指標">
           <MetricCard title="橙艾玻璃貼" metric={data.glassProtector} unit="件" icon={Layers} colorClass="text-orange-500" bgColorClass="bg-orange-50" />
           <MetricCard title="GPLUS吸塵器" metric={data.gplusVacuum} unit="台" icon={Wind} colorClass="text-teal-600" bgColorClass="bg-teal-50" />
+          <MetricCard title="LiTV開通數" metric={data.litv} unit="件" icon={Tv} colorClass="text-blue-500" bgColorClass="bg-blue-50" />
           <MetricCard title="生活圈" metric={data.lifeCircle} unit="件" icon={MessageCircle} colorClass="text-green-600" bgColorClass="bg-green-50" />
           <MetricCard title="Google評論" metric={data.googleReviews} unit="則" icon={Star} colorClass="text-yellow-500" bgColorClass="bg-yellow-50" />
+          <MetricCard title="社群會員數" metric={data.socialMembers} unit="人" icon={Users} colorClass="text-emerald-600" bgColorClass="bg-emerald-50" />
           <MetricCard title="來客數" metric={data.visitors} unit="人" icon={Footprints} colorClass="text-pink-500" bgColorClass="bg-pink-50" />
         </MetricGroup>
       </div>
@@ -835,9 +841,12 @@ export default function App() {
                   <th className="p-4 pl-6 font-bold sticky left-0 bg-slate-50 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] text-center">業務員</th>
                   <th className="p-4 font-bold text-right min-w-[140px]">毛利 (實際/目標)</th>
                   <th className="p-4 font-bold text-center">狀態</th>
+                  <th className="p-4 font-bold text-center">保險營收</th>
                   <th className="p-4 font-bold text-center">門號(件)</th>
                   <th className="p-4 font-bold text-center">配件營收</th>
-                  <th className="p-4 font-bold text-center">保險營收</th>
+                  <th className="p-4 font-bold text-center border-l border-slate-200">中嘉寬頻</th>
+                  <th className="p-4 font-bold text-center">Garmin</th>
+                  <th className="p-4 font-bold text-center">iPhone組合</th>
                   <th className="p-4 font-bold text-center border-l border-slate-200">庫存機</th>
                   <th className="p-4 font-bold text-center">蘋果手機</th>
                   <th className="p-4 font-bold text-center">平板/手錶</th>
@@ -845,9 +854,11 @@ export default function App() {
                   <th className="p-4 font-bold text-center">玻璃貼</th>
                   <th className="p-4 font-bold text-center">VIVO</th>
                   <th className="p-4 font-bold text-center">吸塵器</th>
+                  <th className="p-4 font-bold text-center text-blue-600 border-l border-blue-100">LiTV</th>
                   <th className="p-4 font-bold text-center border-l border-slate-200">生活圈</th>
                   <th className="p-4 font-bold text-center">評論</th>
-                  <th className="p-4 font-bold text-center">來客數</th>
+                  <th className="p-4 font-bold text-center text-emerald-600 border-l border-emerald-100">社群會員</th>
+                  <th className="p-4 font-bold text-center border-l border-slate-200">來客數</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm text-center">
@@ -876,9 +887,12 @@ export default function App() {
                           {empProgress}%
                         </span>
                       </td>
+                      <td className="p-4 text-center font-bold text-rose-600">${formatNum(emp?.insurance?.actual || 0)}</td>
                       <td className="p-4 text-center font-bold text-blue-600">{emp?.contracts?.actual || 0}</td>
                       <td className="p-4 text-center font-bold text-amber-600">${formatNum(emp?.accessories?.actual || 0)}</td>
-                      <td className="p-4 text-center font-bold text-rose-600">${formatNum(emp?.insurance?.actual || 0)}</td>
+                      <td className="p-4 text-center text-cyan-600 border-l border-slate-200">{emp?.homeBroadband?.actual || 0}</td>
+                      <td className="p-4 text-center text-stone-600">{emp?.garmin?.actual || 0}</td>
+                      <td className="p-4 text-center text-purple-600">{emp?.iphoneCombo?.actual || 0}</td>
                       <td className="p-4 text-center text-slate-600 border-l border-slate-200">{emp?.stockPhones?.actual || 0}</td>
                       <td className="p-4 text-center text-slate-600">{emp?.applePhones?.actual || 0}</td>
                       <td className="p-4 text-center text-slate-600">{emp?.appleTablets?.actual || 0}</td>
@@ -886,9 +900,11 @@ export default function App() {
                       <td className="p-4 text-center text-slate-600">{emp?.glassProtector?.actual || 0}</td>
                       <td className="p-4 text-center text-slate-600">{emp?.vivoPhones?.actual || 0}</td>
                       <td className="p-4 text-center text-slate-600">{emp?.gplusVacuum?.actual || 0}</td>
+                      <td className="p-4 text-center text-blue-600 font-bold border-l border-blue-50 bg-blue-50/30">{emp?.litv?.actual || 0}</td>
                       <td className="p-4 text-center text-slate-600 border-l border-slate-200">{emp?.lifeCircle?.actual || 0}</td>
                       <td className="p-4 text-center text-slate-600">{emp?.googleReviews?.actual || 0}</td>
-                      <td className="p-4 text-center text-slate-600">{emp?.visitors?.actual || 0}</td>
+                      <td className="p-4 text-center text-emerald-600 font-bold border-l border-emerald-50 bg-emerald-50/30">{emp?.socialMembers?.actual || 0}</td>
+                      <td className="p-4 text-center text-slate-600 border-l border-slate-200">{emp?.visitors?.actual || 0}</td>
                     </tr>
                   );
                 })}
