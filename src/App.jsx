@@ -6,7 +6,6 @@ import {
   AlertTriangle, Package, Tablet, Watch, Layers, 
   Wind, MessageCircle, Star, Footprints, Flame, Trophy, Sparkles, Crown, Bot,
   X, Send, Info,
-  // 🌟 修正：補上 4 月份新項目的 4 個專屬圖示
   Wifi, Activity, ShoppingBag, Tv
 } from 'lucide-react';
 
@@ -14,8 +13,6 @@ import {
 // 系統核心設定 (Marshall Vibe)
 // ==========================================
 const API_URL = 'https://script.google.com/macros/s/AKfycbwx6i9vZA1J6fzq9ZmNjpdfgA8q1o52IaE04TD8YstMYiuT4vBgQKiZUyu4i2dkgc6c/exec';
-
-// ⚠️ Marshall 安全微創手術：金鑰已移至後端 GAS，前端不再需要填寫，保護安全！
 
 // ==========================================
 // 輔助運算與共用元件
@@ -119,26 +116,23 @@ const SimpleConfetti = () => {
 };
 
 // ==========================================
-// 🌟 核心元件：雙重人格智慧對話框 (採用安全後端代理版)
+// 🌟 核心元件：雙重人格智慧對話框 (安全代理)
 // ==========================================
 const SmartMotivator = ({ data, targetName, allStoresData }) => {
   const [msgObj, setMsgObj] = useState(null);
   const [isVisible, setIsVisible] = useState(true);
   
-  // 聊天室狀態
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatHistory, setChatHistory] = useState([
     { role: 'model', text: '老闆好！我是您的 AI 營運特助 Manie 🤖\n系統已啟用最高級別的「安全後端代理」，保護您的資料不外洩。想了解哪間分店的異常，或誰的潛力最大呢？' }
   ]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  // 🌟 新增：動態狀態文字
   const [typingStatus, setTypingStatus] = useState('思考中...');
   
   const scrollRef = useRef(null);
   const isBossMode = targetName === '全區';
 
-  // 捲動到底部邏輯
   const scrollToBottom = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -153,7 +147,6 @@ const SmartMotivator = ({ data, targetName, allStoresData }) => {
     }
   }, [chatHistory, isChatOpen, isTyping]);
 
-  // 隨機推播提示訊息
   useEffect(() => {
     if (!data) return;
     
@@ -207,7 +200,6 @@ const SmartMotivator = ({ data, targetName, allStoresData }) => {
     return { __html: htmlText };
   };
 
-  // 診斷功能：因改為後端代理，改為顯示安全連線狀態
   const checkAvailableModels = async () => {
     setIsTyping(true);
     setTypingStatus('正在診斷系統連線狀態...');
@@ -227,7 +219,6 @@ const SmartMotivator = ({ data, targetName, allStoresData }) => {
     setInputText('');
     setIsTyping(true);
 
-    // 🌟 動作感提示邏輯：更像真人在查閱報表
     let detectedStore = '';
     if (allStoresData) {
         const storeMatch = allStoresData.find(s => userMessage.includes(s.store));
@@ -267,7 +258,6 @@ const SmartMotivator = ({ data, targetName, allStoresData }) => {
 ${JSON.stringify(simplifiedData)}`;
 
     try {
-      // 🌟 Marshall 手術核心：改為 POST 向 GAS 後端發送請求
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -301,88 +291,44 @@ ${JSON.stringify(simplifiedData)}`;
 
   return (
     <>
-      {/* 🟢 模式 1：靜態推播浮動小窗 */}
-      <div 
-        className={`fixed bottom-6 right-6 z-40 flex items-end gap-3 max-w-[280px] md:max-w-sm transition-all duration-300 ${isChatOpen ? 'opacity-0 pointer-events-none translate-x-10' : 'opacity-100'}`}
-      >
+      <div className={`fixed bottom-6 right-6 z-40 flex items-end gap-3 max-w-[280px] md:max-w-sm transition-all duration-300 ${isChatOpen ? 'opacity-0 pointer-events-none translate-x-10' : 'opacity-100'}`}>
         <div className={`bg-white/95 backdrop-blur-md text-slate-800 p-4 rounded-2xl rounded-br-sm border-2 ${borderColor} transition-all duration-500 transform ${isVisible ? 'translate-y-0 scale-100' : 'translate-y-4 scale-95 opacity-0'}`}>
           <p className="text-sm font-bold leading-relaxed whitespace-pre-wrap">{msgObj.text}</p>
         </div>
-        <div 
-          className={`relative flex-shrink-0 ${isBossMode ? 'cursor-pointer hover:scale-110 active:scale-95 transition-all' : ''}`}
-          onClick={() => isBossMode && setIsChatOpen(true)}
-        >
+        <div className={`relative flex-shrink-0 ${isBossMode ? 'cursor-pointer hover:scale-110 active:scale-95 transition-all' : ''}`} onClick={() => isBossMode && setIsChatOpen(true)}>
           {isBossMode && (
             <div className="absolute -top-2 -right-2 w-7 h-7 bg-indigo-600 rounded-full flex items-center justify-center animate-bounce z-10 border-2 border-white shadow-lg">
               <Sparkles size={14} className="text-white fill-white"/>
             </div>
           )}
-          {/* 🌟 確保顯示 manie.png */}
-          <img 
-            src="/manie.png" 
-            alt="Manie AI" 
-            className={`w-20 h-20 object-contain drop-shadow-2xl transition-all duration-300 ${
-              msgObj.type === 'warning' ? 'animate-pulse' : 
-              msgObj.type === 'praise' ? 'animate-bounce' : ''
-            }`}
-            onError={(e) => {
-               e.target.style.display = 'none';
-               e.target.nextSibling.style.display = 'flex';
-            }}
-          />
+          <img src="/manie.png" alt="Manie AI" className={`w-20 h-20 object-contain drop-shadow-2xl transition-all duration-300 ${msgObj.type === 'warning' ? 'animate-pulse' : msgObj.type === 'praise' ? 'animate-bounce' : ''}`} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
           <div className="hidden w-16 h-16 bg-gradient-to-tr from-indigo-600 to-indigo-400 rounded-full items-center justify-center shadow-lg border-2 border-white">
             <Bot className="text-white" size={32} />
           </div>
         </div>
       </div>
 
-      {/* 🟢 模式 2：AI 深度分析面板 */}
       {isBossMode && (
-        <div 
-          className={`fixed bottom-6 right-6 z-50 w-full max-w-[440px] bg-white rounded-[32px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-200 flex flex-col overflow-hidden transition-all duration-500 origin-bottom-right ${isChatOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'}`}
-          style={{ height: '75vh', maxHeight: '750px', minHeight: '480px' }}
-        >
-          {/* Header */}
+        <div className={`fixed bottom-6 right-6 z-50 w-full max-w-[440px] bg-white rounded-[32px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-200 flex flex-col overflow-hidden transition-all duration-500 origin-bottom-right ${isChatOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'}`} style={{ height: '75vh', maxHeight: '750px', minHeight: '480px' }}>
           <div className="bg-gradient-to-r from-indigo-800 via-indigo-600 to-blue-500 p-5 flex justify-between items-center text-white flex-shrink-0 shadow-lg relative z-10">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
-                <Bot size={24} className="text-white" />
-              </div>
+              <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm"><Bot size={24} className="text-white" /></div>
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="font-black text-lg leading-none tracking-tight">Manie AI 營運特助</h3>
-                  <button 
-                    onClick={checkAvailableModels}
-                    className="p-1 hover:bg-white/30 rounded-full transition-colors"
-                    title="診斷系統狀態"
-                  >
-                    <Info size={14} className="text-indigo-100" />
-                  </button>
+                  <button onClick={checkAvailableModels} className="p-1 hover:bg-white/30 rounded-full transition-colors" title="診斷系統狀態"><Info size={14} className="text-indigo-100" /></button>
                 </div>
                 <p className="text-[10px] opacity-80 mt-1 uppercase font-black tracking-widest text-indigo-100">Safe Backend Proxy</p>
               </div>
             </div>
-            <button onClick={() => setIsChatOpen(false)} className="p-2 hover:bg-white/20 rounded-full transition-all active:scale-90">
-              <X size={20} />
-            </button>
+            <button onClick={() => setIsChatOpen(false)} className="p-2 hover:bg-white/20 rounded-full transition-all active:scale-90"><X size={20} /></button>
           </div>
 
-          {/* 內容區 */}
-          <div 
-            ref={scrollRef}
-            className="flex-1 overflow-y-auto bg-slate-50 p-5 space-y-5 custom-scrollbar"
-          >
+          <div ref={scrollRef} className="flex-1 overflow-y-auto bg-slate-50 p-5 space-y-5 custom-scrollbar">
             {chatHistory.map((chat, idx) => (
               <div key={idx} className={`flex ${chat.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-3 duration-300`}>
-                <div className={`max-w-[92%] p-4 rounded-2xl shadow-sm ${
-                  chat.role === 'user' 
-                    ? 'bg-indigo-600 text-white rounded-br-none shadow-indigo-100' 
-                    : 'bg-white border border-slate-100 text-slate-700 rounded-bl-none'
-                }`}>
-                  <div 
-                    className="whitespace-pre-wrap leading-relaxed text-[15px]" 
-                    dangerouslySetInnerHTML={formatChatText(chat.text)} 
-                  />
+                <div className={`max-w-[92%] p-4 rounded-2xl shadow-sm ${chat.role === 'user' ? 'bg-indigo-600 text-white rounded-br-none shadow-indigo-100' : 'bg-white border border-slate-100 text-slate-700 rounded-bl-none'}`}>
+                  <div className="whitespace-pre-wrap leading-relaxed text-[15px]" dangerouslySetInnerHTML={formatChatText(chat.text)} />
                 </div>
               </div>
             ))}
@@ -394,7 +340,6 @@ ${JSON.stringify(simplifiedData)}`;
                     <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                     <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
                   </div>
-                  {/* 🌟 動作感狀態文字展示區 */}
                   <div className="animate-in fade-in slide-in-from-left-2 duration-500 flex items-center gap-2">
                     <Zap size={12} className="text-indigo-500 animate-pulse" />
                     <span className="text-xs font-black text-indigo-500 tracking-wide">{typingStatus}</span>
@@ -404,39 +349,21 @@ ${JSON.stringify(simplifiedData)}`;
             )}
           </div>
 
-          {/* Footer */}
           <div className="p-4 bg-white border-t border-slate-100 flex gap-3 items-center flex-shrink-0 pb-6 md:pb-4 shadow-[0_-5px_15px_rgba(0,0,0,0.03)]">
-            <input 
-              type="text"
-              value={inputText}
-              onChange={e => setInputText(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
-              placeholder="問我關於全區業績的任何問題..."
-              className="flex-1 bg-slate-100 border border-transparent hover:border-indigo-200 rounded-[18px] px-5 py-3.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none text-slate-800 placeholder:text-slate-400 transition-all font-medium"
-              disabled={isTyping}
-            />
-            <button 
-              onClick={handleSendMessage}
-              disabled={!inputText.trim() || isTyping}
-              className="p-4 bg-indigo-600 text-white rounded-[18px] hover:bg-indigo-700 active:scale-95 disabled:opacity-30 disabled:grayscale transition-all shadow-xl shadow-indigo-100"
-            >
-              <Send size={20} className="fill-white"/>
-            </button>
+            <input type="text" value={inputText} onChange={e => setInputText(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSendMessage()} placeholder="問我關於全區業績的任何問題..." className="flex-1 bg-slate-100 border border-transparent hover:border-indigo-200 rounded-[18px] px-5 py-3.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none text-slate-800 placeholder:text-slate-400 transition-all font-medium" disabled={isTyping} />
+            <button onClick={handleSendMessage} disabled={!inputText.trim() || isTyping} className="p-4 bg-indigo-600 text-white rounded-[18px] hover:bg-indigo-700 active:scale-95 disabled:opacity-30 disabled:grayscale transition-all shadow-xl shadow-indigo-100"><Send size={20} className="fill-white"/></button>
           </div>
         </div>
       )}
 
-      <style dangerouslySetInnerHTML={{__html: `
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
-      `}} />
+      <style dangerouslySetInnerHTML={{__html: `.custom-scrollbar::-webkit-scrollbar { width: 4px; } .custom-scrollbar::-webkit-scrollbar-track { background: transparent; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; } .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }`}} />
     </>
   );
 };
 
-
+// ==========================================
+// 🌟 主系統 App 元件
+// ==========================================
 export default function App() {
   const [rawData, setRawData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -445,7 +372,7 @@ export default function App() {
   const [selectedStore, setSelectedStore] = useState(null);
   const [lockedStore, setLockedStore] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false); 
-  const [debugInfo, setDebugInfo] = useState(null); // 🌟 新增：用於顯示錯誤時的詳細 JSON
+  const [debugInfo, setDebugInfo] = useState(null); 
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -459,7 +386,6 @@ export default function App() {
       try {
         setIsLoading(true);
         const response = await fetch(API_URL);
-        
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const result = await response.json();
         
@@ -477,12 +403,53 @@ export default function App() {
         setIsLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
   const currentMonthData = rawData?.[selectedMonth];
-  const summary = currentMonthData?.summary;
+  
+  // 🛡️ 修復真兇 1：重啟「白畫面防護罩」自動計算總計 (AutoSum)
+  const summary = useMemo(() => {
+    if (currentMonthData?.summary && currentMonthData.summary.grossProfit) {
+      return currentMonthData.summary;
+    }
+    
+    // 如果後端沒回傳總計，就從各分店資料自己算
+    const stores = currentMonthData?.stores || [];
+    if (stores.length === 0) return null;
+
+    const autoSum = {
+      grossProfit: { actual: 0, target: 0 },
+      insurance: { actual: 0, target: 0 },
+      contracts: { actual: 0, target: 0 },
+      accessories: { actual: 0, target: 0 },
+      homeBroadband: { actual: 0, target: 0 },
+      garmin: { actual: 0, target: 0 },
+      iphoneCombo: { actual: 0, target: 0 },
+      stockPhones: { actual: 0, target: 0 },
+      applePhones: { actual: 0, target: 0 },
+      appleTablets: { actual: 0, target: 0 },
+      huaweiWearable: { actual: 0, target: 0 },
+      glassProtector: { actual: 0, target: 0 },
+      vivoPhones: { actual: 0, target: 0 },
+      gplusVacuum: { actual: 0, target: 0 },
+      litv: { actual: 0, target: 0 },
+      lifeCircle: { actual: 0, target: 0 },
+      googleReviews: { actual: 0, target: 0 },
+      socialMembers: { actual: 0, target: 0 },
+      visitors: { actual: 0, target: 0 }
+    };
+
+    stores.forEach(store => {
+      Object.keys(autoSum).forEach(key => {
+        if (store[key]) {
+          autoSum[key].actual += (Number(store[key].actual) || 0);
+          autoSum[key].target += (Number(store[key].target) || 0);
+        }
+      });
+    });
+    return autoSum;
+  }, [currentMonthData]);
   
   const sortedStoresByProfit = useMemo(() => {
     if (!currentMonthData?.stores) return [];
@@ -535,6 +502,7 @@ export default function App() {
   }, [summary, selectedMonth]);
 
 
+  // 載入畫面
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">
@@ -545,6 +513,7 @@ export default function App() {
     );
   }
 
+  // 錯誤畫面
   if (error) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
@@ -565,30 +534,54 @@ export default function App() {
     );
   }
 
+  // 🛡️ 修復真兇 2：資料庫空空如也時的「精美報錯面板」，不再給白畫面
+  if (rawData && Object.keys(rawData).length === 0) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-amber-200 max-w-lg text-center">
+          <div className="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertTriangle size={32} />
+          </div>
+          <h2 className="text-xl font-black text-slate-800 mb-2">連線成功，但沒有抓到任何資料</h2>
+          <p className="text-slate-600 mb-6 text-sm">前端已順利對接 API，但是 Google Apps Script 沒有撈取到任何業績資料。</p>
+          
+          <div className="bg-amber-50/50 p-5 rounded-2xl text-left border border-amber-100">
+            <p className="font-bold text-amber-800 mb-3 text-sm">👉 系統管家建議您檢查「資料樞紐」：</p>
+            <ul className="list-disc pl-5 space-y-2 text-sm text-amber-700 font-medium">
+              <li>A 欄是否填寫了月份 (如 2026-04)？</li>
+              <li>B 欄是否填寫了正確的「資料夾 ID」？</li>
+              <li>該資料夾裡面的日報表名稱是否包含 <span className="text-indigo-600 font-bold">「(ALL)」</span>？</li>
+              <li>修改後，記得在 GAS 中強制重新部署來清除快取。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // 卡片矩陣渲染
+  // ==========================================
   const renderMetricsGrid = (data) => {
     if (!data) return null;
     return (
       <div className="space-y-4">
-        <MetricGroup title="核心營收與門號">
+        <MetricGroup title="各項指標">
+          <MetricCard title="保險營收" metric={data.insurance} unit="元" icon={ShieldCheck} colorClass="text-rose-600" bgColorClass="bg-rose-50" />
           <MetricCard title="門號業績" metric={data.contracts} unit="件" icon={Users} colorClass="text-blue-600" bgColorClass="bg-blue-50" />
           <MetricCard title="配件營收" metric={data.accessories} unit="元" icon={BatteryCharging} colorClass="text-amber-600" bgColorClass="bg-amber-50" />
-          <MetricCard title="保險營收" metric={data.insurance} unit="元" icon={ShieldCheck} colorClass="text-rose-600" bgColorClass="bg-rose-50" />
-          {/* 🌟 4月新項目 */}
           <MetricCard title="中嘉寬頻" metric={data.homeBroadband} unit="件" icon={Wifi} colorClass="text-cyan-600" bgColorClass="bg-cyan-50" />
           <MetricCard title="Garmin" metric={data.garmin} unit="件" icon={Activity} colorClass="text-stone-600" bgColorClass="bg-stone-100" />
           <MetricCard title="iPhone組合" metric={data.iphoneCombo} unit="組" icon={ShoppingBag} colorClass="text-purple-600" bgColorClass="bg-purple-50" />
         </MetricGroup>
 
-        <MetricGroup title="硬體與穿戴銷量">
+        <MetricGroup title="重點目標">
           <MetricCard title="庫存手機" metric={data.stockPhones} unit="台" icon={Package} colorClass="text-slate-600" bgColorClass="bg-slate-100" />
           <MetricCard title="蘋果手機" metric={data.applePhones} unit="台" icon={Smartphone} colorClass="text-slate-800" bgColorClass="bg-slate-200" />
           <MetricCard title="平板與手錶" metric={data.appleTablets} unit="台" icon={Tablet} colorClass="text-slate-600" bgColorClass="bg-slate-100" />
           <MetricCard title="華為穿戴" metric={data.huaweiWearable} unit="點" icon={Watch} colorClass="text-red-600" bgColorClass="bg-red-50" />
-          <MetricCard title="VIVO手機" metric={data.vivoPhones} unit="台" icon={Smartphone} colorClass="text-indigo-500" bgColorClass="bg-indigo-50" />
-        </MetricGroup>
-
-        <MetricGroup title="周邊與營運指標">
           <MetricCard title="橙艾玻璃貼" metric={data.glassProtector} unit="件" icon={Layers} colorClass="text-orange-500" bgColorClass="bg-orange-50" />
+          <MetricCard title="VIVO手機" metric={data.vivoPhones} unit="台" icon={Smartphone} colorClass="text-indigo-500" bgColorClass="bg-indigo-50" />
           <MetricCard title="GPLUS吸塵器" metric={data.gplusVacuum} unit="台" icon={Wind} colorClass="text-teal-600" bgColorClass="bg-teal-50" />
           <MetricCard title="LiTV開通數" metric={data.litv} unit="件" icon={Tv} colorClass="text-blue-500" bgColorClass="bg-blue-50" />
           <MetricCard title="生活圈" metric={data.lifeCircle} unit="件" icon={MessageCircle} colorClass="text-green-600" bgColorClass="bg-green-50" />
@@ -600,8 +593,20 @@ export default function App() {
     );
   };
 
+  // ==========================================
+  // 全區總覽視圖
+  // ==========================================
   const renderAllStoresView = () => {
-    if (!summary || !summary.grossProfit) return null;
+    // 🛡️ 防呆修復：如果沒有總計，不再顯示白畫面，而是提示正在同步
+    if (!summary || !summary.grossProfit) {
+      return (
+        <div className="p-12 text-center bg-white rounded-3xl border border-slate-200 mt-6 animate-in fade-in">
+          <Store size={48} className="text-slate-300 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-slate-700 mb-2">正在同步資料，或此月份尚無業績資料</h3>
+          <p className="text-slate-500 text-sm">此畫面表示 API 已連線，但資料夾內的 (ALL) 檔案尚未有數字。</p>
+        </div>
+      );
+    }
 
     const totalActual = summary?.grossProfit?.actual || 0;
     const totalTarget = summary?.grossProfit?.target || 0;
@@ -765,6 +770,9 @@ export default function App() {
     );
   };
 
+  // ==========================================
+  // 單店明細視圖
+  // ==========================================
   const renderStoreDetailView = () => {
     if (!storeDetail) return null;
     
